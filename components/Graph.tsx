@@ -18,7 +18,8 @@ export default function Graph({ gData }: gProps) {
   const FocusGraph = () => {
     const fgRef = useRef<ForceGraphMethods>()
 
-    const zoomToNode = (node: NodeObject, fg: ForceGraph3D) => {
+    // @ts-expect-error
+    const zoomToNode = (node, fg) => {
       const distance = 50
       const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z)
       fg.cameraPosition(
@@ -28,29 +29,30 @@ export default function Graph({ gData }: gProps) {
       );
     }
 
-    //@ts-expect-error
-    const handleClick = useCallback((node) => {
+    const handleClick = useCallback((node: NodeObject) => {
       if (fgRef.current === undefined) return;
-
       zoomToNode(node, fgRef.current)
-
+      if ('description' in node) {
+        // popup or populate the info panel
+      }
     }, [fgRef])
 
-    return <ForceGraph3D
-      nodeLabel="name"
-      graphData={gData}
-      nodeThreeObject={({ img }: { img: string }) => {
-        const imgTexture = new THREE.TextureLoader().load(`/imgs/${img}`)
-        imgTexture.colorSpace = THREE.SRGBColorSpace
-        const material = new THREE.SpriteMaterial({ map: imgTexture })
-        const sprite = new THREE.Sprite(material)
-        sprite.scale.set(12, 12)
-
-        return sprite;
-      }}
-      onNodeClick={handleClick}
-      ref={fgRef}
-    />
+    return <div>
+      <ForceGraph3D
+        nodeLabel="name"
+        graphData={gData}
+        nodeThreeObject={({ img }: { img: string }) => {
+          const imgTexture = new THREE.TextureLoader().load(`/imgs/${img}`)
+          imgTexture.colorSpace = THREE.SRGBColorSpace
+          const material = new THREE.SpriteMaterial({ map: imgTexture })
+          const sprite = new THREE.Sprite(material)
+          sprite.scale.set(12, 12)
+          return sprite;
+        }}
+        onNodeClick={handleClick}
+        ref={fgRef}
+      />
+    </div>
   }
 
   return <FocusGraph />

@@ -83,10 +83,10 @@ const gData = {
 
 export default function Home() {
   return (
-    <div>
+    <main>
       <Graph
         gData={gData}
       />
-    </div>
+    </main>
   );
 }

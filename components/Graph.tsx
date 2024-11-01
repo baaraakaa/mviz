@@ -1,13 +1,11 @@
 "use client"
-import FocusGraph from "./FocusGraph";
+import FocusGraph, { gData } from "./FocusGraph";
 import { useCallback, useState } from "react";
 import { ForceGraphMethods, NodeObject } from "react-force-graph-3d";
+import InfoPanel from "./InfoPanel";
 
 type gProps = {
-  gData: {
-    nodes: {}[],
-    links: {}[]
-  }
+  gData: gData
 }
 
 export default function Graph({ gData }: gProps) {
@@ -17,12 +15,15 @@ export default function Graph({ gData }: gProps) {
     setSelectedNode(node)
   }
 
-  return <div>
-    <div>
+  return <div style={{display: 'flex', alignItems: 'stretch', width:'100%'}}>
+    <div style={{flexGrow:1, width:'60%' }}>
       <FocusGraph
         gData={gData}
         selectNode={selectNode}
       />
+    </div>
+    <div style={{flexGrow:1, width:'40%', height:'100%'}}>
+      <InfoPanel node={selectedNode} />
     </div>
   </div>
 }

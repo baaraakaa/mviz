@@ -1,22 +1,25 @@
 import { ForceGraph3D } from "react-force-graph";
 import * as THREE from "three";
-import { useCallback, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { ForceGraphMethods, NodeObject } from 'react-force-graph-3d'
 
+export type nodeData = {
+  img: string,
+  type: string
+}
 
 export type gData = {
-  nodes: {
-    img: string
-  }[],
+  nodes: nodeData[],
   links: {}[]
 }
 
 type fgProps = {
   gData: gData,
+  mode: string,
   selectNode: (n: NodeObject) => void
 }
 
-export default function FocusGraph({ gData, selectNode }: fgProps) {
+export default function FocusGraph({ gData, mode, selectNode }: fgProps) {
   const [displayWidth, setDisplayWidth] = useState(window.innerWidth);
   const [displayHeight, setDisplayHeight] = useState(window.innerHeight);
 
@@ -26,8 +29,7 @@ export default function FocusGraph({ gData, selectNode }: fgProps) {
   });
   const fgRef = useRef<ForceGraphMethods>()
 
-
-  // @ts-expect-error
+  //@ts-expect-error
   const zoomToNode = (node, fg) => {
     const distance = 50
     const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z)
@@ -41,7 +43,7 @@ export default function FocusGraph({ gData, selectNode }: fgProps) {
   const handleNodeClick = (node: NodeObject) => {
     if (fgRef == undefined) return
     selectNode(node)
-    zoomToNode(node, fgRef.current)
+    if(mode != 'edit') zoomToNode(node, fgRef.current)
   }
 
   return <ForceGraph3D
@@ -49,15 +51,22 @@ export default function FocusGraph({ gData, selectNode }: fgProps) {
     height={displayHeight}
     nodeLabel="name"
     graphData={gData}
-    nodeThreeObject={({ img }: { img: string }) => {
+    nodeThreeObject={({ img, type }: nodeData) => {
       const imgTexture = new THREE.TextureLoader().load(`/imgs/${img}`)
       imgTexture.colorSpace = THREE.SRGBColorSpace
       const material = new THREE.SpriteMaterial({ map: imgTexture })
       const sprite = new THREE.Sprite(material)
-      sprite.scale.set(12, 12, 1)
+      if(type == 'music'){
+        sprite.scale.set(12,12,1)
+      } else {
+        sprite.scale.set(6, 6, 1)
+      }
       return sprite;
     }}
     onNodeClick={handleNodeClick}
+    //@ts-expect-error
+    linkColor={mode == 'edit' ? 0xff5733  : 0xffffff}
+    linkWidth={mode == 'edit' ? 0.5 : 0.1}
     //@ts-expect-error
     ref={fgRef}
   />

@@ -10,20 +10,29 @@ type gProps = {
 
 export default function Graph({ gData }: gProps) {
   const [selectedNode, setSelectedNode] = useState<NodeObject>()
+  const [mode, setMode] = useState('view')
 
-  const selectNode = (node: NodeObject) => {
-    setSelectedNode(node)
+  const createNewNode = () => {
+    
   }
 
-  return <div style={{display: 'flex', alignItems: 'stretch', width:'100%'}}>
-    <div style={{flexGrow:1, width:'60%' }}>
+
+  return <div style={{ display: 'flex', alignItems: 'stretch', width: '100%' }}>
+    <div style={{ flexGrow: 1, width: '60%' }}>
       <FocusGraph
         gData={gData}
-        selectNode={selectNode}
+        selectNode={setSelectedNode}
+        mode={mode}
       />
     </div>
-    <div style={{flexGrow:1, width:'40%', height:'100%'}}>
-      <InfoPanel node={selectedNode} />
+    <div style={{ flexGrow: 1, width: '40%', height: '100%' }}>
+      <InfoPanel
+        /* @ts-expect-error */
+        node={selectedNode}
+        mode={mode}
+        setMode={setMode}
+        addNode={createNewNode}
+      />
     </div>
   </div>
 }

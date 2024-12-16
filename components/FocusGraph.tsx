@@ -3,13 +3,17 @@ import * as THREE from "three";
 import { useRef, useState } from "react";
 import { ForceGraphMethods, NodeObject } from 'react-force-graph-3d'
 
-export type nodeData = {
+export type NodeData = {
+  id: number,
   img: string,
-  type: string
+  type: string,
+  url: string,
+  name: string,
+  description?: string
 }
 
 export type gData = {
-  nodes: nodeData[],
+  nodes: NodeData[],
   links: {}[]
 }
 
@@ -51,7 +55,7 @@ export default function FocusGraph({ gData, mode, selectNode }: fgProps) {
     height={displayHeight}
     nodeLabel="name"
     graphData={gData}
-    nodeThreeObject={({ img, type }: nodeData) => {
+    nodeThreeObject={({ img, type }: NodeData) => {
       const imgTexture = new THREE.TextureLoader().load(`/imgs/${img}`)
       imgTexture.colorSpace = THREE.SRGBColorSpace
       const material = new THREE.SpriteMaterial({ map: imgTexture })

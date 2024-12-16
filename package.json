@@ -10,17 +10,21 @@
   },
   "dependencies": {
     "@radix-ui/themes": "^3.1.4",
+    "dotenv": "^16.4.7",
     "next": "14.x",
+    "pg": "^8.13.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-force-graph": "^1.29.3",
     "react-force-graph-3d": "^1.24.5",
     "react-markdown": "^9.0.1",
     "react-player": "^2.16.0",
-    "three": "^0.170.0"
+    "three": "^0.170.0",
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
     "@types/node": "^20",
+    "@types/pg": "^8",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/three": "^0",

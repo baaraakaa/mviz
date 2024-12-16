@@ -35,7 +35,7 @@ export default function Graph({ gData }: gProps) {
     }
   }
 
-  const createNode = (node: NodeData, img) => {
+  const createNode = (node: NodeData) => {
     useEffect(() => {
       //uploadImage()
       fetch('/api/graphdata', {

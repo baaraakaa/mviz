@@ -3,6 +3,7 @@ import { NodeObject } from "react-force-graph-3d"
 import Markdown from 'react-markdown'
 import ReactPlayer from "react-player"
 import { NodeData } from "./FocusGraph"
+import ImageUpload from "./ImageUpload"
 
 type pProps = {
   node: NodeData,
@@ -16,6 +17,7 @@ export default function InfoPanel({ node, mode, setMode, addNode, updateGraph }:
   //form state
   const [formName, setFormName] = useState(node && node.name)
   const [formUrl, setFormUrl] = useState(node && node.url)
+  const [uploadedImg, setUploadedImg] = useState("")
 
 
   const handleModeToggle = () => {
@@ -23,6 +25,10 @@ export default function InfoPanel({ node, mode, setMode, addNode, updateGraph }:
   }
   const handleNewNode = () => {
 
+  }
+
+  const onImageUpload = (img: string) => {
+    setUploadedImg(img)
   }
 
   const handleSubmit = (
@@ -38,7 +44,7 @@ export default function InfoPanel({ node, mode, setMode, addNode, updateGraph }:
       name: elements[0].value,
       type: node.type,
       url: elements[1].value,
-      img: node.img
+      img: uploadedImg == "" ? node.img : uploadedImg
     })
   }
 
@@ -114,5 +120,8 @@ export default function InfoPanel({ node, mode, setMode, addNode, updateGraph }:
     </div>
     {content}
     {mode == 'edit' && editForm}
+    {mode == 'edit' && <ImageUpload
+      onUpload={onImageUpload}
+    />}
   </div>
 }

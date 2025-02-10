@@ -24,21 +24,21 @@ export type Node = newNode & {
 }
 
 export const dbOps = {
-  getGraphData: () => {
+  getGraphData: async () => {
     return {
-      'nodes': connectionPool.query(`
+      'nodes': (await connectionPool.query(`
             SELECT id, type, name, img, url, description
             FROM nodes;
-        `),
-      'edges': connectionPool.query(`
+        `)).rows,
+      'links': (await connectionPool.query(`
             SELECT id, source, target
             FROM edges;
-        `)
+        `)).rows
     }
   },
-  upsertNode: (node: Node | newNode) => {
+  upsertNode: async (node: Node | newNode) => {
     if ('id' in node && node.id > 0) {
-      return connectionPool.query(`
+      return await connectionPool.query(`
         INSERT INTO nodes (id, type, name, img, url, description)
         VALUES(
             '${node.id}',
@@ -51,7 +51,7 @@ export const dbOps = {
         ON CONFLICT (id) DO UPDATE;
       `)
     } else {
-      return connectionPool.query(`
+      return await connectionPool.query(`
         INSERT INTO nodes (type, name, img, url, description)
         VALUES(
             '${node.type}',
@@ -64,21 +64,21 @@ export const dbOps = {
     }
 
   },
-  removeNode: (id: number) => {
-    return connectionPool.query(`
+  removeNode: async (id: number) => {
+    return await connectionPool.query(`
       DELETE FROM nodes WHERE id='${id}';
     `)
   },
-  addEdge: (nodeId1: Node, nodeId2: Node) => {
+  addEdge: async (nodeId1: Node, nodeId2: Node) => {
     let nodes = [nodeId1, nodeId2]
     nodes.sort()
-    return connectionPool.query(`
+    return await connectionPool.query(`
       INSERT INTO edges (source, target)
       VALUES('${nodes[0]}','${nodes[1]}');
     `)
   },
-  removeEdge: (id: number) => {
-    return connectionPool.query(`
+  removeEdge: async (id: number) => {
+    return await connectionPool.query(`
       DELETE FROM edges WHERE id='${id}';
     `)
   }

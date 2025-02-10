@@ -1,6 +1,6 @@
 import { ForceGraph3D } from "react-force-graph";
 import * as THREE from "three";
-import { useRef, useState } from "react";
+import { MutableRefObject, useRef, useState } from "react";
 import { ForceGraphMethods, NodeObject } from 'react-force-graph-3d'
 
 export type NodeData = {
@@ -14,24 +14,30 @@ export type NodeData = {
 
 export type gData = {
   nodes: NodeData[],
-  links: {}[]
+  links: {
+    source: number | NodeData,
+    target: number | NodeData
+  }[]
 }
 
 type fgProps = {
   gData: gData,
   mode: string,
+  linkMode: boolean,
   selectNode: (n: NodeObject) => void
 }
 
-export default function FocusGraph({ gData, mode, selectNode }: fgProps) {
+export default function FocusGraph({ gData, mode, linkMode, selectNode }: fgProps) {
   const [displayWidth, setDisplayWidth] = useState(window.innerWidth);
   const [displayHeight, setDisplayHeight] = useState(window.innerHeight);
+
+  const fgRef = useRef<ForceGraphMethods>()
+
 
   window.addEventListener('resize', () => {
     setDisplayWidth(window.innerWidth);
     setDisplayHeight(window.innerHeight);
   });
-  const fgRef = useRef<ForceGraphMethods>()
 
   //@ts-expect-error
   const zoomToNode = (node, fg) => {
@@ -40,14 +46,14 @@ export default function FocusGraph({ gData, mode, selectNode }: fgProps) {
     fg.cameraPosition(
       { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio }, // new position
       node, // lookAt ({ x, y, z })
-      2000  // ms transition duration
+      1500  // ms transition duration
     );
   }
 
   const handleNodeClick = (node: NodeObject) => {
     if (fgRef == undefined) return
     selectNode(node)
-    if(mode != 'edit') zoomToNode(node, fgRef.current)
+    if(!linkMode) zoomToNode(node, fgRef.current)
   }
 
   return <ForceGraph3D
@@ -69,8 +75,8 @@ export default function FocusGraph({ gData, mode, selectNode }: fgProps) {
     }}
     onNodeClick={handleNodeClick}
     //@ts-expect-error
-    linkColor={mode == 'edit' ? 0xff5733  : 0xffffff}
-    linkWidth={mode == 'edit' ? 0.5 : 0.1}
+    linkColor={linkMode ? 0xff5733  : 0xffffff}
+    linkWidth={linkMode ? 0.5 : 0.1}
     //@ts-expect-error
     ref={fgRef}
   />

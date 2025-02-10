@@ -1,4 +1,7 @@
+"use client"
+
 import Graph from "@/components/Graph";
+import { useEffect, useState } from "react";
 
 const gData = {
   "nodes": [
@@ -82,9 +85,20 @@ const gData = {
 }
 
 export default function Home() {
+  const [graphData, setGraphData] = useState()
+  
+  // useEffect(() => {
+  //     fetch('/api/graphdata').then(
+  //       response => response.json().then(
+  //         body => setGraphData(body)
+  //       )
+  //     )
+  // },[])
+  // console.log(graphData)
   return (
     <main>
       <Graph
+        //@ts-ignore-error
         gData={gData}
       />
     </main>
